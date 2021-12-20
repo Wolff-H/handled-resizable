@@ -34,10 +34,10 @@ type ResizerDataMap = WeakMap<HTMLElement, ResizerData>
 
 
 /**
- * This package is still under heavy development. For 2.0 version it's planned to support multiple resizees for one resizer (这需求每个resizee上可以记录其专门的resizee_data，而不是公用一个配置，那样没有意义).
- * @param resizer The resizer handle (provided by user)
- * @param resizee The resizable element that will response to the resizer
- * @param options Movevment along x and y axis. 1 for positive, -1 for negative, 0 for standstill. X and y are both set to 1 by default. Reuturn falsy in hooks to prevent default behaviour.
+ * Offers ability of resizing element by dragging a handle.
+ * @param resizer Resizer. The resizer handle.
+ * @param resizee Resizee. The resizable element that will response to the resizer.
+ * @param options Options.
  */
 function handledResizable(
     resizer: HTMLElement,
@@ -70,7 +70,7 @@ function handledResizable(
 
     const map: ResizerDataMap = window.__HandledResizable.resizer_data_map
 
-    // 删除 //
+    // delete //
     if(resizee === null)
     {
         map.delete(resizer)
@@ -78,7 +78,7 @@ function handledResizable(
         return
     }
 
-    // 新建或更新 //
+    // create or update //
     map.set(
         resizer,
         {
@@ -101,10 +101,10 @@ function _dragStart(event: MouseEvent)
     const map:ResizerDataMap = window.__HandledResizable.resizer_data_map
     const resizer_data = map.get(resizer)!
 
-    // 调用自定义hook //
+    // custom hook //
     if(resizer_data.hooks?.resizeStart && resizer_data.hooks?.resizeStart(event, resizer, resizer_data) === false) return
 
-    // 初始化resizer_data //
+    // initialize resizer_data //
     map.set(
         resizer,
         Object.assign(
@@ -131,7 +131,7 @@ function _drag(event: MouseEvent)
     const map:ResizerDataMap = window.__HandledResizable.resizer_data_map
     const resizer_data = map.get(resizer)!
 
-    // 调用自定义hook //
+    // custom hook //
     if(resizer_data.hooks?.resize && resizer_data.hooks?.resize(event, resizer, resizer_data) === false) return
 
     if(resizer_data.movement.x !== 0)
@@ -153,7 +153,7 @@ function _dragEnd(event: MouseEvent)
     document.removeEventListener('mousemove', _drag)
     document.removeEventListener('mouseup', _dragEnd)
 
-    // 调用自定义hook //
+    // custom hook //
     if(resizer_data.hooks?.resizeEnd)
     {
         resizer_data.hooks?.resizeEnd(event, resizer, resizer_data)
@@ -165,6 +165,8 @@ function _dragEnd(event: MouseEvent)
 export
 {
     HandledResizableData,
+    ResizerData,
+    ResizerDataMap,
 }
 
 export default handledResizable

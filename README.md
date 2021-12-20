@@ -1,58 +1,53 @@
-# drag-scroll
+# handled-resizable
 
-A javascript library that offers ability of scrolling element by dragging.
+A javascript library that offers ability of resizing element by dragging a handle.
 
 ## Installation
 
-`$ npm install dragroll`
+`$ npm install handled-resizable`
 
 ## Usage
 
-Notice: Due to the package name occupation on npm, this package is named as "dragroll". However for usual use, it's recommended to import as "dragScroll", which will be more semantic and accurate.
+Notice: This library is designed to be as elementary as possible. Thus, to use this library you must provide a "handle" (the resizer) element by yourself.
 
 ### Basic
 ```js
-import dragScroll from "dragroll"
+import handledResizable from "handled-resizable"
 
-dragScroll(draggable, scrollable)
+handledResizable(resizer, resizee)
 ```
 
 ## API
 
 ```ts
-function dragScroll(
-    scrollable: HTMLElement,
-    draggable: HTMLElement|null,
+function handledResizable(
+    resizer: HTMLElement,
+    resizee: HTMLElement|null,
     options?:
     {
         movement?:
         {
-            x?: [number, number]
-            y?: [number, number]
-            swapped?: boolean
+            x?: -1|0|1,
+            y?: -1|0|1,
         },
-        constrained?: boolean
-        destroy?: boolean,
-        override?: boolean,
-        avoid?: HTMLElement[],
         hooks?:
         {
-            dragStart?: (event: MouseEvent, draggable: HTMLElement, draggable_data: DraggableData) => void|false
-            drag?: (event: MouseEvent, draggable: HTMLElement, draggable_data: DraggableData) => void|false
-            dragEnd?: (event: MouseEvent, draggable: HTMLElement, draggable_data: DraggableData) => void
+            resizeStart?: (event: MouseEvent, resizer: HTMLElement, resizer_data: ResizerData) => void|false,
+            resize?: (event: MouseEvent, resizer: HTMLElement, resizer_data: ResizerData) => void|false,
+            resizeEnd?: (event: MouseEvent, resizer: HTMLElement, resizer_data: ResizerData) => void,
         }
     },
 ): void
 ```
 
-- `scrollable`
+- `resizer`
 
-    The scrollable element. When drag occurs on draggable, scrollable scrolls correspondingly.
+    The resizer element. Drag the resizer to resize resizee.
 
-- `draggable`
+- `resizee`
 
-    The draggable element. Drag on draggable triggers dragscroll action.  
-    When null, clear all dragscroll relations on passed scrollable.
+    The resizee element. When drag on resizer, resizee resizes correspondingly.
+    When null, clear all resizable relations on passed resizer.
 
 - `options`
 
@@ -63,46 +58,28 @@ function dragScroll(
         Movement constraint.
     
         - `x`, `y`
-        
-            Defines each drag_trigger_threshold and scroll_respond_vector, in form [number, number], in unit "px".
 
-            > drag_trigger_threshold: A quantum of dragging distance. When cursor drags out of per this quantum, trigger once scroll action.
+            Defines in what direction the resizee resizes.
 
-            > scroll_respond_vector: A quantum of scrolling distance. When scroll triggers, scroll this much distance.
+            > -1: Negative direction.
+            
+            > 0: No move.
 
-        - `swapped`
-        
-            When true, swap dragscroll axis.
-        
-    - `destroy`
-    
-        When true, from target scrollable remove the dragscroll relation on target draggable.
-    
-    - `override`
+            > 1: Positive direction.
 
-        When true, in update override whole scrollable relations to only contain target relation.
-    
-    - `constrained`
-
-        When true, dragscroll will only happen when cursor is inside scrollable.
-    
-    - `avoid`
-
-        Dragscroll will not happen on those elements.
-    
     - `hooks`
 
         Custom hooks.
 
-        - `dragStart`
+        - `resizeStart`
 
-            Call when drag starts. Return `false` to prevent default behaviour.
+            Call when resize starts. Return `false` to prevent default behaviour.
 
-        - `drag`
+        - `resize`
 
-            Call on each drag move. Return `false` to prevent default behaviour.
+            Call on each resize move. Return `false` to prevent default behaviour.
 
-        - `dragEnd`
+        - `resizeEnd`
 
-            Call when drag ends.
+            Call when resize ends.
 
